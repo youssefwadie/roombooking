@@ -1,15 +1,36 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { DataService } from 'src/app/data.service';
+import { Room } from 'src/app/model/Room';
 
 @Component({
   selector: 'app-rooms',
   templateUrl: './rooms.component.html',
-  styleUrls: ['./rooms.component.css']
+  styleUrls: ['./rooms.component.css'],
+  providers: [DataService],
 })
 export class RoomsComponent implements OnInit {
-
-  constructor() { }
+  rooms: Array<Room> = new Array<Room>();
+  selectedRoom!: Room;
+  constructor(
+    private dataService: DataService,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
+    this.rooms = this.dataService.rooms;
+    
+    this.route.queryParams.subscribe((params) => {
+      const id = params['id'];
+      if (id) {
+        this.selectedRoom =
+          this.rooms.find((room) => room.id === +id) || this.rooms[0];
+      }
+    });
   }
 
+  setRoom(id: number) {
+    this.router.navigate(['admin', 'rooms'], { queryParams: { id } });
+  }
 }
