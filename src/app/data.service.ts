@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { Layout, LayoutCapacity, Room } from './model/Room';
 import { User } from './model/User';
 
@@ -27,9 +27,18 @@ export class DataService {
     this.rooms.push(room1);
     this.rooms.push(room2);
 
-    const user1 = new User(1, 'Youssef');
-    const user2 = new User(2, 'Diana');
-    const user3 = new User(3, 'Dalia');
+    const user1 = new User();
+    user1.id = 1;
+    user1.name = 'Youssef';
+
+    const user2 = new User();
+    user2.id = 2;
+    user2.name = 'Diana';
+
+    const user3 = new User();
+    user3.id = 3;
+    user3.name = 'Dalia';
+
     this.users.push(user1);
     this.users.push(user2);
     this.users.push(user3);
@@ -41,5 +50,26 @@ export class DataService {
 
   getUsers(): Observable<Array<User>> {
     return of(this.users);
+  }
+
+  updateUser(user: User): Observable<User> {
+    const originalUser = this.users.find((u) => u.id === user.id);
+    if (originalUser) {
+      originalUser.name = user.name;
+      return of(originalUser);
+    }
+    return throwError(() => `no user with id: ${user.id} was found`);
+  }
+
+  addUser(newUser: User, password: string): Observable<User> {
+    let id = 0;
+    for (const user of this.users) {
+      if (user.id > id) {
+        id = user.id;
+      }
+    }
+    newUser.id = id + 1;
+    this.users.push(newUser);
+    return of(newUser);
   }
 }

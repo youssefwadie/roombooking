@@ -1,22 +1,35 @@
-<h1>Add or Edit User</h1>
+<h1>{{ user.id == null ? "Add" : "Edit" }} User</h1>
 
-<div class="bg-warning p-5">warning message placeholder</div>
+<div *ngIf="message" class="bg-warning p-5">{{ message }}</div>
 
-<form action="some-url-goes-here" method="post">
-
+<form>
   <div class="form-group">
     <label for="name">Name</label>
-    <input type="text" class="form-control" id="name" placeholder="user name">
+    <input
+      type="text"
+      class="form-control"
+      id="name"
+      placeholder="user name"
+      [(ngModel)]="formUser.name"
+      name="name"
+    />
     <div class="alert alert-danger">error message placeholder</div>
-
   </div>
 
-  <div class="form-group"> <!-- only show this field on adding a user -->
+  <div class="form-group" *ngIf="user.id == null">
     <label for="password">Password</label>
-    <input type="password" class="form-control" id="password" placeholder="password">
+    <input
+      type="password"
+      class="form-control"
+      id="password"
+      placeholder="password"
+      [(ngModel)]="password"
+      name="password"
+    />
     <div class="alert alert-danger">error message placeholder</div>
-
   </div>
 
-  <button type="submit" class="btn btn-primary">Save</button>
+  <button type="button" class="btn btn-primary" (click)="onSubmit()">
+    Save
+  </button>
 </form>
