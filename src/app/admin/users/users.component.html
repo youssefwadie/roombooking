@@ -22,6 +22,7 @@
     </table>
   </div>
   <div class="col-6">
-    <app-user-detail *ngIf="selectedUser !== undefined" [user]="selectedUser"></app-user-detail>
+    <app-user-detail *ngIf="action === 'view'" [user]="selectedUser"></app-user-detail>
+    <app-user-edit *ngIf="action === 'edit'" [user]="selectedUser"></app-user-edit>
   </div>
 </div>

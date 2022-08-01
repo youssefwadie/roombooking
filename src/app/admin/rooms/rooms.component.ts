@@ -19,8 +19,8 @@ export class RoomsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.rooms = this.dataService.rooms;
-    
+    this.dataService.getRooms().subscribe((next) => (this.rooms = next));
+
     this.route.queryParams.subscribe((params) => {
       const id = params['id'];
       if (id) {
