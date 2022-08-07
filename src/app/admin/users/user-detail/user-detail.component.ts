@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 export class UserDetailComponent implements OnInit {
   @Input()
   user!: User;
-
+  edit = false;
   constructor(private router: Router) {}
 
   ngOnInit(): void {}

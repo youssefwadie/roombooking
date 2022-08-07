@@ -6,12 +6,25 @@
   <div class="form-group">
     <label for="name">Name</label>
     <input
-      type="text" class="form-control" id="name" placeholder="user name" [(ngModel)]="formUser.name" name="name"
-      (change)="checkIfNameIsValid()" required #nameField="ngModel"/>
+      type="text"
+      class="form-control"
+      id="name"
+      placeholder="user name"
+      [(ngModel)]="formUser.name"
+      name="name"
+      (change)="checkIfNameIsValid()"
+      required
+      #nameField="ngModel"
+    />
 
-    <div *ngIf="nameField.invalid && nameField.touched" class="alert alert-danger">Name is required</div>
-    <div *ngIf="!nameIsValid && nameField.touched" class="alert alert-danger">Name cannot be blank</div>
-
+    <div
+      *ngIf="nameField.invalid && nameField.touched"
+      class="alert alert-danger">
+      Name is required
+    </div>
+    <div *ngIf="!nameIsValid && nameField.touched" class="alert alert-danger">
+      Name cannot be blank
+    </div>
   </div>
 
   <div class="form-group" *ngIf="user.id == null">
@@ -27,11 +40,15 @@
       #password1Field="ngModel"
       (change)="checkIfPasswordsAreValid()"
     />
-    <div *ngIf="(password1Field.invalid && password1Field.touched) || (password2Field.invalid && password2Field.touched)"
-      class="alert alert-danger">Passwords are required
+    <div
+      *ngIf="(password1Field.invalid && password1Field.touched) || (password2Field.invalid && password2Field.touched)"
+      class="alert alert-danger"
+    >
+      Passwords are required
     </div>
     <div *ngIf="!passwordsAreValid && (password1Field.touched || password2Field.touched)"
-         class="alert alert-danger">Passwords cannot be blank
+         class="alert alert-danger">
+      Passwords cannot be blank
     </div>
 
     <label for="password2">Repeat Password</label>
@@ -51,8 +68,8 @@
     </div>
   </div>
 
-  <button [disabled]="userForm.invalid || !nameIsValid || !passwordsMatch || !passwordsAreValid" type="button"
-          class="btn btn-primary" (click)="onSubmit()">
+  <button [disabled]="userForm.invalid || !nameIsValid || !passwordsMatch || !passwordsAreValid"
+          type="button" class="btn btn-primary" (click)="onSubmit()">
     Save
   </button>
 </form>

@@ -11,7 +11,9 @@ import { Room } from 'src/app/model/Room';
 })
 export class RoomsComponent implements OnInit {
   rooms: Array<Room> = new Array<Room>();
-  selectedRoom!: Room;
+  selectedRoom: Room;
+  action = 'view';
+
   constructor(
     private dataService: DataService,
     private route: ActivatedRoute,
@@ -23,14 +25,27 @@ export class RoomsComponent implements OnInit {
 
     this.route.queryParams.subscribe((params) => {
       const id = params['id'];
+      this.action = params['action'];
       if (id) {
         this.selectedRoom =
           this.rooms.find((room) => room.id === +id) || this.rooms[0];
       }
+      if (this.action === 'add') {
+        this.selectedRoom = new Room();
+        this.action = 'edit';
+      }
     });
   }
 
-  setRoom(id: number) {
-    this.router.navigate(['admin', 'rooms'], { queryParams: { id } });
+  setRoom(id: number): void {
+    this.router.navigate(['admin', 'rooms'], {
+      queryParams: { id, action: 'view' },
+    });
+  }
+
+  addRoom(): void {
+    this.router.navigate(['admin', 'rooms'], {
+      queryParams: { action: 'add' },
+    });
   }
 }
