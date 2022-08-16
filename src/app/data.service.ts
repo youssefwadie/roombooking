@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
-import { Observable, of, throwError } from 'rxjs';
-import { Layout, LayoutCapacity, Room } from './model/Room';
-import { User } from './model/User';
+import {Injectable} from '@angular/core';
+import {EMPTY, Observable, of, throwError} from 'rxjs';
+import {Layout, LayoutCapacity, Room} from './model/Room';
+import {User} from './model/User';
 
 @Injectable({
   providedIn: 'root',
@@ -87,4 +87,31 @@ export class DataService {
     this.users.push(newUser);
     return of(newUser);
   }
+
+  updateRoom(room: Room): Observable<Room> {
+    const originalRoom = this.rooms.find(r => r.id === room.id);
+    if(!originalRoom) {
+      return EMPTY;
+    }
+
+    originalRoom.name = room.name;
+    originalRoom.location = room.location;
+    originalRoom.capacities = room.capacities;
+
+    return of(originalRoom);
+  }
+
+  addRoom(newRoom: Room): Observable<Room> {
+    let id = 0;
+    for (const room of this.rooms) {
+      if (room.id > id) {
+        id = room.id;
+      }
+    }
+
+    newRoom.id = id + 1;
+    this.rooms.push(newRoom);
+    return of(newRoom);
+  }
+
 }
