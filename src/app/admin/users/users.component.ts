@@ -34,8 +34,6 @@ export class UsersComponent implements OnInit {
       if (id) {
         this.selectedUser =
           this.users.find((user) => user.id === +id) || this.users[0];
-      } else {
-        this.addUser();
       }
     });
   }

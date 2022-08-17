@@ -1,6 +1,6 @@
-import { TestBed } from '@angular/core/testing';
+import {TestBed} from '@angular/core/testing';
 
-import { FormResetService } from './form-reset.service';
+import {FormResetService} from './form-reset.service';
 
 describe('FormResetService', () => {
   let service: FormResetService;

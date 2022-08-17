@@ -1,8 +1,8 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Layout, LayoutCapacity, Room} from 'src/app/model/Room';
 import {DataService} from "../../../data.service";
-import {Route, Router} from "@angular/router";
+import {Router} from "@angular/router";
 import {FormResetService} from "../../../form-reset.service";
 import {Subscription} from "rxjs";
 
