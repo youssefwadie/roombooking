@@ -21,7 +21,6 @@
 
   <h2>This room can accommodate:</h2>
 
-  <!-- list the layout types here -->
   <div class="form-group" *ngFor="let layout of layouts">
     <label for="layout{{layout}}">{{layoutEnum[layout]}}</label>
     <input type="number" class="form-control" id="layout{{layout}}" formControlName="layout{{layout}}">

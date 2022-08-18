@@ -1,22 +1,31 @@
 import {Injectable} from '@angular/core';
-import {EMPTY, Observable, of} from 'rxjs';
+import {EMPTY, map, Observable, of} from 'rxjs';
 import {Room} from './model/Room';
 import {User} from './model/User';
 import {Booking} from "./model/Booking";
+import {HttpClient} from "@angular/common/http";
+import {environment} from "../environments/environment";
 
 @Injectable({
   providedIn: 'root',
 })
 export class DataService {
-  constructor() {
+  constructor(private http: HttpClient) {
   }
 
   getRooms(): Observable<Array<Room>> {
-    return of([]);
+    return this.http.get<Array<Room>>(environment.restUrl + '/api/rooms')
+    .pipe(map(data => {
+      return data.map((room: Room) => Room.fromHttp(room))
+    }));
+    
   }
 
   getUsers(): Observable<Array<User>> {
-    return of([]);
+    return this.http.get<Array<User>>(environment.restUrl + '/api/users')
+    .pipe(map(data => {
+      return data.map((user: User) => User.fromHttp(user));
+    }));
   }
 
   updateUser(user: User): Observable<User> {
@@ -67,4 +76,10 @@ export class DataService {
     return of(null);
   }
 
+  getUser(id: number): Observable<User> {
+    return this.http
+      .get<User>(environment.restUrl + `/api/users/${id}`)
+      .pipe(map(data => User.fromHttp(data)));
+  
+  }
 }

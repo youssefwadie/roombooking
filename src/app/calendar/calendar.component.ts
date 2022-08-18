@@ -3,6 +3,7 @@ import {DataService} from "../data.service";
 import {Booking} from "../model/Booking";
 import {ActivatedRoute, Router} from "@angular/router";
 import {formatDate} from "@angular/common";
+import {User} from "../model/User";
 
 @Component({
   selector: 'app-calendar',
@@ -25,6 +26,32 @@ export class CalendarComponent implements OnInit {
   // selectedDate = new Date();
 
   ngOnInit(): void {
+    this.dataService.getUser(1)
+      .subscribe((next: User) => {
+        console.log(next.name);
+        console.log(next.getRole());
+        console.log(typeof next);
+      });
+      
+    // users
+    // this.dataService.getUsers()
+    // .subscribe(next => {
+    //   for(const u of next) {
+    //     console.log(u);
+    //   }
+    //   console.log('\n\n\n');
+    // });
+
+    
+    // this.dataService.getRooms()
+    // .subscribe(next => {
+    //   console.log('rooms');
+    //   console.log(next);
+    //   console.log('\n\n\n');
+
+    //   }
+    // );
+    
     this.route.queryParams.subscribe(params => {
       this.selectedDate = params['date'];
       if (!this.selectedDate) {
