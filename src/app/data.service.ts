@@ -75,11 +75,4 @@ export class DataService {
   deleteBooking(id: number): Observable<any> {
     return of(null);
   }
-
-  getUser(id: number): Observable<User> {
-    return this.http
-      .get<User>(environment.restUrl + `/api/users/${id}`)
-      .pipe(map(data => User.fromHttp(data)));
-  
-  }
 }

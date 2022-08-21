@@ -1,8 +1,8 @@
-import {Component, OnInit} from '@angular/core';
-import {DataService} from '../../data.service';
-import {User} from '../../model/User';
-import {ActivatedRoute, Router} from '@angular/router';
-import {FormResetService} from "../../form-reset.service";
+import { Component, OnInit } from '@angular/core';
+import { DataService } from '../../data.service';
+import { User } from '../../model/User';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FormResetService } from '../../form-reset.service';
 
 @Component({
   selector: 'app-users',
@@ -16,6 +16,9 @@ export class UsersComponent implements OnInit {
   selectedUser!: User;
   action: string;
 
+  message = 'Loading users data ... please wait';
+  loadingData = true;
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -26,8 +29,22 @@ export class UsersComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.dataService.getUsers().subscribe((next) => (this.users = next));
+    this.loadData();
+  }
 
+  loadData(): void {
+    this.dataService.getUsers().subscribe({
+      next: (next) => {
+        this.users = next;
+        this.loadingData = false;
+        this.processUrlParams();
+      },
+      error: (err) => {
+        this.message = 'An error occurred - please contact support.';
+      },
+    });
+  }
+  processUrlParams(): void {
     this.route.queryParams.subscribe((params) => {
       const id = params['id'];
       this.action = params['action'];
@@ -40,7 +57,7 @@ export class UsersComponent implements OnInit {
 
   setUser(id: number): void {
     this.router.navigate(['admin', 'users'], {
-      queryParams: {id, action: 'view'},
+      queryParams: { id, action: 'view' },
     });
   }
 
@@ -48,7 +65,7 @@ export class UsersComponent implements OnInit {
     this.selectedUser = new User();
     this.formResetService.resetFormUserEvent.emit(this.selectedUser);
     this.router.navigate(['admin', 'users'], {
-      queryParams: {action: 'add'},
+      queryParams: { action: 'add' },
     });
   }
 }
