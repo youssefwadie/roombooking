@@ -36,6 +36,7 @@
     <app-user-edit
       *ngIf="action === 'edit' || action === 'add'"
       [user]="selectedUser"
+      (dataChangedEvent)="loadData()"
     ></app-user-edit>
   </div>
 </div>

@@ -1,9 +1,16 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {Router} from '@angular/router';
-import {DataService} from 'src/app/data.service';
-import {User} from 'src/app/model/User';
-import {FormResetService} from "../../../form-reset.service";
-import {Subscription} from "rxjs";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
+import { Router } from '@angular/router';
+import { DataService } from 'src/app/data.service';
+import { User } from 'src/app/model/User';
+import { FormResetService } from '../../../form-reset.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-user-edit',
@@ -13,6 +20,9 @@ import {Subscription} from "rxjs";
 export class UserEditComponent implements OnInit, OnDestroy {
   @Input()
   user: User;
+
+  @Output()
+  dataChangedEvent = new EventEmitter<void>();
 
   formUser: User;
 
@@ -29,10 +39,11 @@ export class UserEditComponent implements OnInit, OnDestroy {
 
   resetEventSubscription: Subscription;
 
-  constructor(private router: Router,
-              private dataService: DataService,
-              private formResetService: FormResetService) {
-  }
+  constructor(
+    private router: Router,
+    private dataService: DataService,
+    private formResetService: FormResetService
+  ) {}
 
   ngOnInit(): void {
     this.initializeForm();
@@ -41,7 +52,6 @@ export class UserEditComponent implements OnInit, OnDestroy {
         this.user = userToEdit;
         this.initializeForm();
       });
-
   }
 
   initializeForm(): void {
@@ -51,22 +61,32 @@ export class UserEditComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(): void {
+    this.message = 'Saving...';
+
     if (this.formUser.id == null) {
-      this.dataService
-        .addUser(this.formUser, this.password)
-        .subscribe((user) => {
+      this.dataService.addUser(this.formUser, this.password).subscribe({
+        next: (user) => {
+          this.dataChangedEvent.emit();
           this.router.navigate(['admin', 'users'], {
-            queryParams: {id: user.id, action: 'view'},
+            queryParams: { id: user.id, action: 'view' },
           });
-        });
+        },
+        error: (err) => {
+          this.message =
+            "Something went wrong and the data wasn't saved. You may want to try again.";
+        },
+      });
     } else {
       this.dataService.updateUser(this.formUser).subscribe({
         next: (user) => {
+          this.dataChangedEvent.emit();
           this.router.navigate(['admin', 'users'], {
-            queryParams: {id: user.id, action: 'view'},
+            queryParams: { id: user.id, action: 'view' },
           });
         },
-        error: (error) => console.log(error),
+        error: (error) =>
+          (this.message =
+            "Something went wrong and the data wasn't saved. You may want to try again."),
       });
     }
   }
@@ -94,7 +114,6 @@ export class UserEditComponent implements OnInit, OnDestroy {
         this.passwordsMatch = this.password === this.password2;
       }
     }
-
   }
 
   ngOnDestroy(): void {
