@@ -96,7 +96,11 @@ export class DataService {
   }
 
   getBookings(date: string): Observable<Array<Booking>> {
-    return EMPTY;
+    return this.http
+      .get<Array<Booking>>(`${environment.restUrl}/api/bookings/${date}`)
+      .pipe(
+        map((bookings) => bookings.map((booking) => Booking.fromHttp(booking)))
+      );
   }
 
   addBooking(newBooking: Booking): Observable<Booking> {
@@ -112,6 +116,6 @@ export class DataService {
   }
 
   deleteBooking(id: number): Observable<any> {
-    return of(undefined);
+    return this.http.delete(`${environment.restUrl}/api/bookings/${id}`);
   }
 }

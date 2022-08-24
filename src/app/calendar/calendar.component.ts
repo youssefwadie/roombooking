@@ -1,19 +1,19 @@
-import {Component, OnInit} from '@angular/core';
-import {DataService} from "../data.service";
-import {Booking} from "../model/Booking";
-import {ActivatedRoute, Router} from "@angular/router";
-import {formatDate} from "@angular/common";
-import {User} from "../model/User";
+import { Component, OnInit } from '@angular/core';
+import { DataService } from '../data.service';
+import { Booking } from '../model/Booking';
+import { ActivatedRoute, Router } from '@angular/router';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-calendar',
   templateUrl: './calendar.component.html',
-  styleUrls: ['./calendar.component.css']
+  styleUrls: ['./calendar.component.css'],
 })
 export class CalendarComponent implements OnInit {
-
   bookings: Array<Booking>;
   selectedDate: string;
+  message = '';
+  dataLoaded = false;
 
   constructor(
     private router: Router,
@@ -23,27 +23,35 @@ export class CalendarComponent implements OnInit {
     this.bookings = new Array<Booking>();
   }
 
-  // selectedDate = new Date();
-
   ngOnInit(): void {
-    
-    this.route.queryParams.subscribe(params => {
+    this.loadData();
+  }
+
+  loadData(): void {
+    this.message = 'Loading data...';
+    this.route.queryParams.subscribe((params) => {
       this.selectedDate = params['date'];
       if (!this.selectedDate) {
         this.selectedDate = formatDate(new Date(), 'yyyy-MM-dd', 'en-US');
       }
-      this.dataService.getBookings(this.selectedDate).subscribe(bookings => this.bookings = bookings);
+      this.dataService.getBookings(this.selectedDate).subscribe({
+        next: (next) => {
+          this.bookings = next;
+          this.dataLoaded = true;
+          this.message = '';
+        },
+        error: (error) =>
+          (this.message = 'Sorry, the data could not be loaded.'),
+      });
     });
-
   }
 
   editBooking(id: number) {
-    this.router.navigate(['editBooking'],
-      {
-        queryParams: {
-          id
-        }
-      });
+    this.router.navigate(['editBooking'], {
+      queryParams: {
+        id,
+      },
+    });
   }
 
   addBooking() {
@@ -51,14 +59,23 @@ export class CalendarComponent implements OnInit {
   }
 
   deleteBooking(id: number) {
-    this.dataService.deleteBooking(id);
+    this.message = 'deleting please wait...';
+    this.dataService.deleteBooking(id).subscribe({
+      next: (next) => {
+        this.message = '';
+        this.loadData();
+      },
+      error: (err) => {
+        this.message = 'Sorry, there was a problem deleting the item.';
+      },
+    });
   }
 
   dateChanged() {
     this.router.navigate([''], {
       queryParams: {
-        date: this.selectedDate
-      }
+        date: this.selectedDate,
+      },
     });
 
     console.log(this.selectedDate);
