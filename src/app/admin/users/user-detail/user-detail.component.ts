@@ -1,7 +1,7 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {User} from '../../../model/User';
-import {Router} from '@angular/router';
-import {DataService} from "../../../data.service";
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { User } from '../../../model/User';
+import { Router } from '@angular/router';
+import { DataService } from '../../../data.service';
 
 @Component({
   selector: 'app-user-detail',
@@ -13,30 +13,44 @@ export class UserDetailComponent implements OnInit {
   user!: User;
   edit = false;
 
-  constructor(private router: Router,
-              private dataService: DataService) {
-  }
+  @Output()
+  dataChangedEvent = new EventEmitter();
 
-  ngOnInit(): void {
-  }
+  message = '';
+
+  constructor(private router: Router, private dataService: DataService) {}
+
+  ngOnInit(): void {}
 
   editUser(): void {
     this.router.navigate(['admin', 'users'], {
-      queryParams: {id: this.user.id, action: 'edit'},
+      queryParams: { id: this.user.id, action: 'edit' },
     });
   }
 
-
   deleteUser(): void {
-    this.dataService.deleteUser(this.user.id).subscribe(
-      next => {
+    this.message = 'deleting...';
+    this.dataService.deleteUser(this.user.id).subscribe({
+      next: (next) => {
+        this.dataChangedEvent.emit();
         this.router.navigate(['admin', 'users']);
-      }
-    );
+      },
+      error: (err) => {
+        this.message = 'Sorry, this user cannot be deleted at this time';
+      },
+    });
   }
 
   resetPassword(): void {
-    this.dataService.resetUserPassword(this.user.id);
+    this.message = 'please wait';
+    this.dataService.resetUserPassword(this.user.id).subscribe({
+      next: (next) => {
+        this.message = 'The password has been reset.';
+      },
+      error: (err) => {
+        console.log(err);
+        this.message = 'Sorry, something went wrong';
+      },
+    });
   }
-
 }
