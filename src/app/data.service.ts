@@ -111,8 +111,10 @@ export class DataService {
     return EMPTY;
   }
 
-  getBooking(id: number): Observable<Booking | undefined> {
-    return of(undefined);
+  getBooking(id: number): Observable<Booking> {
+    return this.http
+      .get<Booking>(`${environment.restUrl}/api/bookings/${id}`)
+      .pipe(map((booking) => Booking.fromHttp(booking)));
   }
 
   deleteBooking(id: number): Observable<any> {
