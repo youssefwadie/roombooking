@@ -104,11 +104,17 @@ export class DataService {
   }
 
   addBooking(newBooking: Booking): Observable<Booking> {
-    return of(newBooking);
+    return this.http.post<Booking>(
+      environment.restUrl + '/api/bookings',
+      this.getCorrectedBooking(newBooking)
+    );
   }
 
   updateBooking(booking: Booking): Observable<Booking> {
-    return EMPTY;
+    return this.http.put<Booking>(
+      environment.restUrl + '/api/bookings',
+      this.getCorrectedBooking(booking)
+    );
   }
 
   getBooking(id: number): Observable<Booking> {
@@ -119,5 +125,36 @@ export class DataService {
 
   deleteBooking(id: number): Observable<any> {
     return this.http.delete(`${environment.restUrl}/api/bookings/${id}`);
+  }
+
+  private getCorrectedBooking(booking: Booking) {
+    let correctLayout;
+    for (let member in Layout) {
+      if (Layout[member as keyof typeof Layout] === booking.layout) {
+        correctLayout = member;
+      }
+    }
+
+    if (booking.startTime.length < 8) {
+      booking.startTime = booking.startTime + ':00';
+    }
+
+    if (booking.endTime.length < 8) {
+      booking.endTime = booking.endTime + ':00';
+    }
+
+    const correctedBooking = {
+      id: booking.id,
+      room: this.getCorrectedRoom(booking.room),
+      user: booking.user,
+      title: booking.title,
+      date: booking.date,
+      startTime: booking.startTime,
+      endTime: booking.endTime,
+      participants: booking.participants,
+      layout: correctLayout,
+    };
+
+    return correctedBooking;
   }
 }

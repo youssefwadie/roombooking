@@ -1,10 +1,9 @@
-import {Injectable} from '@angular/core';
-import {EMPTY, Observable, of, throwError} from 'rxjs';
-import {Layout, LayoutCapacity, Room} from './model/Room';
-import {User} from './model/User';
-import {Booking} from "./model/Booking";
-import {formatDate} from "@angular/common";
-import {environment} from "../environments/environment";
+import { Injectable } from '@angular/core';
+import { EMPTY, map, Observable, of, throwError } from 'rxjs';
+import { Layout, LayoutCapacity, Room } from './model/Room';
+import { User } from './model/User';
+import { Booking } from './model/Booking';
+import { formatDate } from '@angular/common';
 
 @Injectable({
   providedIn: 'root',
@@ -19,7 +18,6 @@ export class DataService {
     this.users = new Array<User>();
     this.bookings = new Array<Booking>();
 
-
     const room1 = new Room();
     room1.id = 1;
     room1.name = 'First Room';
@@ -29,7 +27,7 @@ export class DataService {
     capacity1.layout = Layout.THEATER;
     capacity1.capacity = 50;
     const capacity2 = new LayoutCapacity();
-    capacity2.layout = Layout.USHAPE
+    capacity2.layout = Layout.USHAPE;
     capacity2.capacity = 20;
 
     room1.capacities.push(capacity1);
@@ -63,7 +61,6 @@ export class DataService {
     this.users.push(user1);
     this.users.push(user2);
     this.users.push(user3);
-
 
     const booking1 = new Booking();
     booking1.id = 1;
@@ -121,7 +118,7 @@ export class DataService {
   }
 
   updateRoom(room: Room): Observable<Room> {
-    const originalRoom = this.rooms.find(r => r.id === room.id);
+    const originalRoom = this.rooms.find((r) => r.id === room.id);
     if (!originalRoom) {
       return EMPTY;
     }
@@ -147,7 +144,7 @@ export class DataService {
   }
 
   deleteRoom(id: number): Observable<any> {
-    const room = this.rooms.find(r => r.id === id);
+    const room = this.rooms.find((r) => r.id === id);
     if (room) {
       this.rooms.splice(this.rooms.indexOf(room), 1);
     }
@@ -155,7 +152,7 @@ export class DataService {
   }
 
   deleteUser(id: number): Observable<any> {
-    const user = this.users.find(u => u.id === id);
+    const user = this.users.find((u) => u.id === id);
     if (user) {
       this.users.splice(this.users.indexOf(user), 1);
     }
@@ -167,7 +164,7 @@ export class DataService {
   }
 
   getBookings(date: string): Observable<Array<Booking>> {
-    return of(this.bookings.filter(b => b.date === date));
+    return of(this.bookings.filter((b) => b.date === date));
   }
 
   addBooking(newBooking: Booking): Observable<Booking> {
@@ -182,7 +179,7 @@ export class DataService {
   }
 
   updateBooking(booking: Booking): Observable<Booking> {
-    const existingBooking = this.bookings.find(b => b.id === booking.id);
+    const existingBooking = this.bookings.find((b) => b.id === booking.id);
     if (existingBooking) {
       existingBooking.date = booking.date;
       existingBooking.startTime = booking.startTime;
@@ -197,16 +194,22 @@ export class DataService {
     return throwError(() => `no booking with id: ${booking.id}`);
   }
 
-  getBooking(id: number): Observable<Booking | undefined> {
-    return of(this.bookings.find(booking => booking.id === id));
+  getBooking(id: number): Observable<Booking> {
+    return of(this.bookings.find((booking) => booking.id === id)).pipe(
+      map((booking: Booking | undefined) => {
+        if (!booking) {
+          return new Booking();
+        }
+        return booking;
+      })
+    );
   }
 
   deleteBooking(id: number): Observable<any> {
-    const booking = this.bookings.find(u => u.id === id);
+    const booking = this.bookings.find((u) => u.id === id);
     if (booking) {
       this.bookings.splice(this.bookings.indexOf(booking), 1);
     }
     return of(null);
   }
-
 }

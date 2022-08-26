@@ -63,13 +63,17 @@ export class EditBookingComponent implements OnInit {
 
   onSubmit(): void {
     if (this.booking.id == null) {
-      this.dataService
-        .addBooking(this.booking)
-        .subscribe((next) => this.router.navigate(['']));
+      this.dataService.addBooking(this.booking).subscribe({
+        next: (next) => this.router.navigate(['']),
+        error: (err) =>
+          (this.message = "something went wrong : the booking wasn't saved."),
+      });
     } else {
-      this.dataService
-        .updateBooking(this.booking)
-        .subscribe((next) => this.router.navigate(['']));
+      this.dataService.updateBooking(this.booking).subscribe({
+        next: (next) => this.router.navigate(['']),
+        error: (err) =>
+          (this.message = "something went wrong : the booking wasn't saved."),
+      });
     }
   }
 }
