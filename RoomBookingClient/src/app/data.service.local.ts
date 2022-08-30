@@ -213,12 +213,12 @@ export class DataService {
     return of(null);
   }
 
-  validateUser(name: string, passowrd: string): Observable<{ result: string }> {
+  validateUser(name: string, password: string): Observable<{ result: string }> {
     return of({ result: 'ok' });
   }
 
   getRole(): Observable<{ role: string }> {
-    return of({ role: 'Admin' });
+    return of({ role: 'ADMIN' });
   }
   logout(): Observable<string> {
     return of('logged-out');

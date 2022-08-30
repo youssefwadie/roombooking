@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
-import { map, Observable } from 'rxjs';
-import { Layout, Room } from './model/Room';
-import { User } from './model/User';
-import { Booking } from './model/Booking';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { environment } from '../environments/environment';
+import {Injectable} from '@angular/core';
+import {map, Observable} from 'rxjs';
+import {Layout, Room} from './model/Room';
+import {User} from './model/User';
+import {Booking} from './model/Booking';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {environment} from '../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -172,7 +172,7 @@ export class DataService {
       booking.endTime = booking.endTime + ':00';
     }
 
-    const correctedBooking = {
+    return {
       id: booking.id,
       room: this.getCorrectedRoom(booking.room),
       user: booking.user,
@@ -183,15 +183,13 @@ export class DataService {
       participants: booking.participants,
       layout: correctLayout,
     };
-
-    return correctedBooking;
   }
 
-  validateUser(name: string, passowrd: string): Observable<{ result: string }> {
-    const encodedNameAndPassowrd = window.btoa(`${name}:${passowrd}`);
+  validateUser(name: string, password: string): Observable<{ result: string }> {
+    const encodedNameAndPassword = window.btoa(`${name}:${password}`);
     const headers = new HttpHeaders().append(
       'Authorization',
-      `Basic ${encodedNameAndPassowrd}`
+      `Basic ${encodedNameAndPassword}`
     );
 
     return this.http.get<{ result: string }>(
