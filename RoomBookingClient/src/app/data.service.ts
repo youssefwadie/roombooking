@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
-import { EMPTY, map, Observable, of } from 'rxjs';
-import { Layout, LayoutCapacity, Room } from './model/Room';
+import { map, Observable } from 'rxjs';
+import { Layout, Room } from './model/Room';
 import { User } from './model/User';
 import { Booking } from './model/Booking';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../environments/environment';
-import { TypeofExpr } from '@angular/compiler';
 
 @Injectable({
   providedIn: 'root',
@@ -13,12 +12,18 @@ import { TypeofExpr } from '@angular/compiler';
 export class DataService {
   constructor(private http: HttpClient) {}
 
-  getRooms(): Observable<Array<Room>> {
-    return this.http.get<Array<Room>>(environment.restUrl + '/api/rooms').pipe(
-      map((data) => {
-        return data.map((room: Room) => Room.fromHttp(room));
-      })
+  getRooms(token: string): Observable<Array<Room>> {
+    const headers = new HttpHeaders().append(
+      'Authorization',
+      `Bearer ${token}`
     );
+    return this.http
+      .get<Array<Room>>(environment.restUrl + '/api/rooms', { headers })
+      .pipe(
+        map((data) => {
+          return data.map((room: Room) => Room.fromHttp(room));
+        })
+      );
   }
 
   getUsers(): Observable<Array<User>> {
@@ -63,11 +68,13 @@ export class DataService {
 
     return correctedRoom;
   }
-  updateRoom(room: Room): Observable<Room> {
+  updateRoom(room: Room, token: string): Observable<Room> {
+    const headers = new HttpHeaders().append('Authorization', `Bearer ${token}`);
     return this.http
       .put<Room>(
         environment.restUrl + '/api/rooms',
-        this.getCorrectedRoom(room)
+        this.getCorrectedRoom(room),
+        { headers }
       )
       .pipe(map((data) => Room.fromHttp(data)));
   }
@@ -156,5 +163,20 @@ export class DataService {
     };
 
     return correctedBooking;
+  }
+
+  validateUser(name: string, passowrd: string): Observable<{ token: string }> {
+    const encodedNameAndPassowrd = window.btoa(`${name}:${passowrd}`);
+    const headers = new HttpHeaders().append(
+      'Authorization',
+      `Basic ${encodedNameAndPassowrd}`
+    );
+
+    return this.http.get<{ token: string }>(
+      `${environment.restUrl}/api/basicAuth/validate`,
+      {
+        headers: headers,
+      }
+    );
   }
 }

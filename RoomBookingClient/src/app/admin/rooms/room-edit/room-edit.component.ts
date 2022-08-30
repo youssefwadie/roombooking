@@ -12,6 +12,7 @@ import { DataService } from '../../../data.service';
 import { Router } from '@angular/router';
 import { FormResetService } from '../../../form-reset.service';
 import { Subscription } from 'rxjs';
+import { AuthService } from 'src/app/auth.service';
 
 @Component({
   selector: 'app-room-edit',
@@ -37,7 +38,8 @@ export class RoomEditComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private router: Router,
     private dataService: DataService,
-    private formResetService: FormResetService
+    private formResetService: FormResetService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -74,7 +76,7 @@ export class RoomEditComponent implements OnInit, OnDestroy {
 
   onSubmit() {
     this.message = 'Saving ...';
-    
+
     this.room.name = this.roomForm.controls['roomName'].value;
     this.room.location = this.roomForm.value['location'];
     this.room.capacities = new Array<LayoutCapacity>();
@@ -99,18 +101,21 @@ export class RoomEditComponent implements OnInit, OnDestroy {
         },
       });
     } else {
-      this.dataService.updateRoom(this.room).subscribe({
-        next: (savedRoom) => {
-          this.dataChangedEvent.emit();
-          this.router.navigate(['admin', 'rooms'], {
-            queryParams: { id: savedRoom.id, action: 'view' },
-          });
-        },
-        error: (err) => {
-          this.message =
-            "Something went wrong and the data wasn't saved. You may want to try again.";
-        },
-      });
+      this.dataService
+        .updateRoom(this.room, this.authService.jwtToken)
+        .subscribe({
+          next: (savedRoom) => {
+            this.dataChangedEvent.emit();
+            this.router.navigate(['admin', 'rooms'], {
+              queryParams: { id: savedRoom.id, action: 'view' },
+            });
+          },
+          error: (err) => {
+            this.message =
+              "Something went wrong and the data wasn't saved. You may want to try again. " +
+              err.status;
+          },
+        });
     }
   }
 
