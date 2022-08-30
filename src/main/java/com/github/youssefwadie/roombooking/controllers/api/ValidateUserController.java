@@ -3,6 +3,9 @@ package com.github.youssefwadie.roombooking.controllers.api;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,17 +25,23 @@ public class ValidateUserController {
 	}
 
 	@RequestMapping("validate")
-	public ResponseEntity<Map<String, String>> userIsValid() {
+	public ResponseEntity<Map<String, String>> userIsValid(HttpServletResponse response) {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		User currentUser = (User) auth.getPrincipal();
 		
 		String name = currentUser.getUsername();
 		String role =  currentUser.getAuthorities().toArray()[0].toString().substring(5);
 		String token = jwtService.generateToken(name, role);
-
-		Map<String, String> response = new HashMap<>();
-		response.put("token", token);
+		Cookie cookie = new Cookie("token", token);
+		cookie.setPath("/api");
+//		cookie.setMaxAge();
+		cookie.setHttpOnly(true);
 		
-		return ResponseEntity.ok(response);
+		response.addCookie(cookie);
+		
+		Map<String, String> responseBody = new HashMap<>();
+		responseBody.put("result", "ok");
+		
+		return ResponseEntity.ok(responseBody);
 	}
 }

@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -34,9 +35,8 @@ public class JWTAutorizationFilter extends OncePerRequestFilter {
 			WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(servletContext);
 			jwtService = wac.getBean(JWTService.class);
 		}
-
-		String authoriztionHeader = request.getHeader("Authorization");
-		UsernamePasswordAuthenticationToken authentication = getAuthentication(authoriztionHeader);
+		Cookie tokenCookie = getTokenCookie(request);
+		UsernamePasswordAuthenticationToken authentication = getAuthentication(tokenCookie.getValue());
 
 		SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
 		securityContext.setAuthentication(authentication);
@@ -45,9 +45,8 @@ public class JWTAutorizationFilter extends OncePerRequestFilter {
 		chain.doFilter(request, response);
 	}
 
-	private UsernamePasswordAuthenticationToken getAuthentication(String autorizationHeader) {
+	private UsernamePasswordAuthenticationToken getAuthentication(String jwtToken) {
 		try {
-			String jwtToken = autorizationHeader.substring(7);
 			String payload = jwtService.validateToken(jwtToken);
 			JsonParser parser = JsonParserFactory.getJsonParser();
 			Map<String, Object> payloadMap = parser.parseMap(payload);
@@ -62,10 +61,20 @@ public class JWTAutorizationFilter extends OncePerRequestFilter {
 
 	@Override
 	public boolean shouldNotFilter(HttpServletRequest request) {
-		String authorizationHeader = request.getHeader("Authorization");
-		if (authorizationHeader == null) {
-			return true;
+		return this.getTokenCookie(request) == null;
+	}
+	
+	
+	private Cookie getTokenCookie(HttpServletRequest request) {
+		Cookie[] cookies = request.getCookies();
+		if(cookies == null) {
+			return null;
 		}
-		return !authorizationHeader.startsWith("Bearer");
+		for(Cookie cookie : cookies) {
+			if(cookie.getName() == "token") {
+				return cookie;
+			}
+		}
+		return null;
 	}
 }

@@ -52,8 +52,10 @@ public class SecurityConfig {
 		return new WebMvcConfigurer() {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/api/**").allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-						.allowedOrigins("http://localhost:4200").allowedHeaders("*");
+				registry.addMapping("/api/**")
+						.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+						.allowedOrigins("http://localhost:4200").allowedHeaders("*")
+						.allowCredentials(true);
 
 				// TODO: change the URL to the production URL
 			}
