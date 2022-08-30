@@ -213,7 +213,7 @@ export class DataService {
     return of(null);
   }
 
-  validateUser(name: string, passowrd: string): Observable<{ token: string }> {
-    return of({ token: 'ok' });
+  validateUser(name: string, passowrd: string): Observable<{ result: string }> {
+    return of({ result: 'ok' });
   }
 }

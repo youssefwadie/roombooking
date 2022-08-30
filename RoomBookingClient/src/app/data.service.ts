@@ -12,13 +12,11 @@ import { environment } from '../environments/environment';
 export class DataService {
   constructor(private http: HttpClient) {}
 
-  getRooms(token: string): Observable<Array<Room>> {
-    const headers = new HttpHeaders().append(
-      'Authorization',
-      `Bearer ${token}`
-    );
+  getRooms(): Observable<Array<Room>> {
     return this.http
-      .get<Array<Room>>(environment.restUrl + '/api/rooms', { headers })
+      .get<Array<Room>>(environment.restUrl + '/api/rooms', {
+        withCredentials: true,
+      })
       .pipe(
         map((data) => {
           return data.map((room: Room) => Room.fromHttp(room));
@@ -68,13 +66,12 @@ export class DataService {
 
     return correctedRoom;
   }
-  updateRoom(room: Room, token: string): Observable<Room> {
-    const headers = new HttpHeaders().append('Authorization', `Bearer ${token}`);
+  updateRoom(room: Room): Observable<Room> {
     return this.http
       .put<Room>(
         environment.restUrl + '/api/rooms',
         this.getCorrectedRoom(room),
-        { headers }
+        { withCredentials: true }
       )
       .pipe(map((data) => Room.fromHttp(data)));
   }
@@ -165,17 +162,18 @@ export class DataService {
     return correctedBooking;
   }
 
-  validateUser(name: string, passowrd: string): Observable<{ token: string }> {
+  validateUser(name: string, passowrd: string): Observable<{ result: string }> {
     const encodedNameAndPassowrd = window.btoa(`${name}:${passowrd}`);
     const headers = new HttpHeaders().append(
       'Authorization',
       `Basic ${encodedNameAndPassowrd}`
     );
 
-    return this.http.get<{ token: string }>(
+    return this.http.get<{ result: string }>(
       `${environment.restUrl}/api/basicAuth/validate`,
       {
-        headers: headers,
+        headers,
+        withCredentials: true,
       }
     );
   }

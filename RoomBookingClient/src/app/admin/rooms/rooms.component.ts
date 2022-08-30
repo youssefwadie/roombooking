@@ -35,7 +35,7 @@ export class RoomsComponent implements OnInit {
   }
 
   loadData() {
-    this.dataService.getRooms(this.authService.jwtToken).subscribe({
+    this.dataService.getRooms().subscribe({
       next: (next) => {
         this.rooms = next;
         this.loadingData = false;
