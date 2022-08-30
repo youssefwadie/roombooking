@@ -177,4 +177,11 @@ export class DataService {
       }
     );
   }
+
+  getRole(): Observable<{ role: string }> {
+    return this.http.get<{ role: string }>(
+      environment.restUrl + '/api/users/role',
+      { withCredentials: true }
+    );
+  }
 }

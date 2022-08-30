@@ -28,20 +28,22 @@ public class ValidateUserController {
 	public ResponseEntity<Map<String, String>> userIsValid(HttpServletResponse response) {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		User currentUser = (User) auth.getPrincipal();
-		
+
 		String name = currentUser.getUsername();
-		String role =  currentUser.getAuthorities().toArray()[0].toString().substring(5);
+		String role = currentUser.getAuthorities().toArray()[0].toString().substring(5);
 		String token = jwtService.generateToken(name, role);
 		Cookie cookie = new Cookie("token", token);
 		cookie.setPath("/api");
-//		cookie.setMaxAge();
+		cookie.setMaxAge((int) (jwtService.getExpirationTime() / 1000));
 		cookie.setHttpOnly(true);
-		
+		// TODO: when in production
+		// cookie.setSecure(true);
+
 		response.addCookie(cookie);
-		
+
 		Map<String, String> responseBody = new HashMap<>();
 		responseBody.put("result", "ok");
-		
+
 		return ResponseEntity.ok(responseBody);
 	}
 }

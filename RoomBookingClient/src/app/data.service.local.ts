@@ -216,4 +216,8 @@ export class DataService {
   validateUser(name: string, passowrd: string): Observable<{ result: string }> {
     return of({ result: 'ok' });
   }
+
+  getRole(): Observable<{ role: string }> {
+    return of({ role: 'Admin' });
+  }
 }

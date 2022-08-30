@@ -47,4 +47,7 @@ public class JWTService {
 
 		return new String(Base64.getDecoder().decode(encodedPayload));
 	}
+	public long getExpirationTime() {
+		return expirationTime;
+	}
 }

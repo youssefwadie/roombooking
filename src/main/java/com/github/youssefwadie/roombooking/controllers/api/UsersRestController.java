@@ -1,9 +1,14 @@
 package com.github.youssefwadie.roombooking.controllers.api;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -77,4 +82,20 @@ public class UsersRestController {
 		return ResponseEntity.ok().build();
 	}
 
+	@GetMapping("/role")
+	public ResponseEntity<Map<String, String>> getCurrentUsersRole() {
+		Collection<GrantedAuthority> roles = (Collection<GrantedAuthority>) SecurityContextHolder.getContext()
+				.getAuthentication().getAuthorities();
+		
+		String role = "";
+		if (roles.size() > 0) {
+			GrantedAuthority ga = roles.iterator().next();
+			role = ga.getAuthority().substring(5);
+		}
+		
+
+		Map<String, String> responseBody = new HashMap<>();
+		responseBody.put("role", role);
+		return ResponseEntity.ok(responseBody);
+	}
 }
