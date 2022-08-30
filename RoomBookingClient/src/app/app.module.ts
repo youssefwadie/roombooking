@@ -34,7 +34,7 @@ const routes: Routes = [
   {
     path: '',
     component: CalendarComponent,
-    canActivate: [AuthRouteGuardService],
+    // canActivate: [AuthRouteGuardService],
   },
   {
     path: 'editBooking',

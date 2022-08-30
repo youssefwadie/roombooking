@@ -32,6 +32,10 @@ export class RoomsComponent implements OnInit {
     this.reloadAttempts = 0;
     this.loadData();
     this.isAdminUser = this.authService.role === 'ADMIN';
+    this.authService.roleSetEvent.subscribe((next) => {
+      if (next === 'ADMIN') this.isAdminUser = true;
+      else this.isAdminUser = false;
+    });
   }
 
   loadData() {

@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -98,4 +101,20 @@ public class UsersRestController {
 		responseBody.put("role", role);
 		return ResponseEntity.ok(responseBody);
 	}
+	
+	@GetMapping("logout")
+	public ResponseEntity<String> logout(HttpServletResponse response) {
+	
+		Cookie cookie = new Cookie("token", null);
+		cookie.setPath("/api");
+		cookie.setMaxAge(0);
+		cookie.setHttpOnly(true);
+		// TODO: when in production
+		// cookie.setSecure(true);
+		response.addCookie(cookie);
+
+		SecurityContextHolder.getContext().setAuthentication(null);
+		return ResponseEntity.ok("logged-out");
+	}
+	
 }

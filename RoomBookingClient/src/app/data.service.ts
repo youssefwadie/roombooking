@@ -25,22 +25,31 @@ export class DataService {
   }
 
   getUsers(): Observable<Array<User>> {
-    return this.http.get<Array<User>>(environment.restUrl + '/api/users').pipe(
-      map((data) => {
-        return data.map((user: User) => User.fromHttp(user));
+    return this.http
+      .get<Array<User>>(environment.restUrl + '/api/users', {
+        withCredentials: true,
       })
-    );
+      .pipe(
+        map((data) => {
+          return data.map((user: User) => User.fromHttp(user));
+        })
+      );
   }
 
   updateUser(user: User): Observable<User> {
-    return this.http.put<User>(environment.restUrl + '/api/users', user);
+    return this.http.put<User>(environment.restUrl + '/api/users', user, {
+      withCredentials: true,
+    });
   }
 
   addUser(newUser: User, password: string): Observable<User> {
     const userWithPassword = { id: newUser.id, name: newUser.name, password };
     return this.http.post<User>(
       environment.restUrl + '/api/users',
-      userWithPassword
+      userWithPassword,
+      {
+        withCredentials: true,
+      }
     );
   }
 
@@ -80,22 +89,28 @@ export class DataService {
     return this.http
       .post<Room>(
         environment.restUrl + '/api/rooms',
-        this.getCorrectedRoom(newRoom)
+        this.getCorrectedRoom(newRoom),
+        { withCredentials: true }
       )
       .pipe(map((data) => Room.fromHttp(data)));
   }
 
   deleteRoom(id: number): Observable<any> {
-    return this.http.delete(`${environment.restUrl}/api/rooms/${id}`);
+    return this.http.delete(`${environment.restUrl}/api/rooms/${id}`, {
+      withCredentials: true,
+    });
   }
 
   deleteUser(id: number): Observable<any> {
-    return this.http.delete(`${environment.restUrl}/api/users/${id}`);
+    return this.http.delete(`${environment.restUrl}/api/users/${id}`, {
+      withCredentials: true,
+    });
   }
 
   resetUserPassword(id: number): Observable<any> {
     return this.http.get(
-      `${environment.restUrl}/api/users/resetPassword/${id}`
+      `${environment.restUrl}/api/users/resetPassword/${id}`,
+      { withCredentials: true }
     );
   }
 
@@ -110,25 +125,35 @@ export class DataService {
   addBooking(newBooking: Booking): Observable<Booking> {
     return this.http.post<Booking>(
       environment.restUrl + '/api/bookings',
-      this.getCorrectedBooking(newBooking)
+      this.getCorrectedBooking(newBooking),
+      {
+        withCredentials: true,
+      }
     );
   }
 
   updateBooking(booking: Booking): Observable<Booking> {
     return this.http.put<Booking>(
       environment.restUrl + '/api/bookings',
-      this.getCorrectedBooking(booking)
+      this.getCorrectedBooking(booking),
+      {
+        withCredentials: true,
+      }
     );
   }
 
   getBooking(id: number): Observable<Booking> {
     return this.http
-      .get<Booking>(`${environment.restUrl}/api/bookings/${id}`)
+      .get<Booking>(`${environment.restUrl}/api/bookings/${id}`, {
+        withCredentials: true,
+      })
       .pipe(map((booking) => Booking.fromHttp(booking)));
   }
 
   deleteBooking(id: number): Observable<any> {
-    return this.http.delete(`${environment.restUrl}/api/bookings/${id}`);
+    return this.http.delete(`${environment.restUrl}/api/bookings/${id}`, {
+      withCredentials: true,
+    });
   }
 
   private getCorrectedBooking(booking: Booking) {
@@ -179,9 +204,19 @@ export class DataService {
   }
 
   getRole(): Observable<{ role: string }> {
+    const headers = new HttpHeaders().append(
+      'X-Requested-With',
+      'XMLHttpRequest'
+    );
     return this.http.get<{ role: string }>(
       environment.restUrl + '/api/users/role',
-      { withCredentials: true }
+      { headers, withCredentials: true }
     );
+  }
+
+  logout(): Observable<string> {
+    return this.http.get<string>(environment.restUrl + '/api/users/logout', {
+      withCredentials: true,
+    });
   }
 }

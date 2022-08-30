@@ -220,4 +220,7 @@ export class DataService {
   getRole(): Observable<{ role: string }> {
     return of({ role: 'Admin' });
   }
+  logout(): Observable<string> {
+    return of('logged-out');
+  }
 }

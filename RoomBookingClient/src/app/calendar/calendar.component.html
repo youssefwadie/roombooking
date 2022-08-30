@@ -10,7 +10,7 @@
   />
 </h2>
 
-<a class="btn btn-primary mt-3 mb-5" (click)="addBooking()">New Booking</a>
+<a *ngIf="isAdminUser" class="btn btn-primary mt-3 mb-5" (click)="addBooking()">New Booking</a>
 <div *ngIf="message" class="bg-warning p-2">{{ message }}</div>
 
 <div *ngIf="dataLoaded">
@@ -52,8 +52,8 @@
           <p>Participants: {{ booking.participants }}</p>
         </div>
         <div class="col-6">
-          <a class="btn btn-warning" (click)="editBooking(booking.id)">Amend</a>
-          <a class="btn btn-danger" (click)="deleteBooking(booking.id)"
+          <a *ngIf="isAdminUser" class="btn btn-warning" (click)="editBooking(booking.id)">Amend</a>
+          <a *ngIf="isAdminUser" class="btn btn-danger" (click)="deleteBooking(booking.id)"
             >Cancel</a
           >
         </div>

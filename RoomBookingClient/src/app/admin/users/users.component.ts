@@ -3,6 +3,7 @@ import { DataService } from '../../data.service';
 import { User } from '../../model/User';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormResetService } from '../../form-reset.service';
+import { AuthService } from 'src/app/auth.service';
 
 @Component({
   selector: 'app-users',
@@ -17,18 +18,25 @@ export class UsersComponent implements OnInit {
 
   message = 'Loading users data ... please wait';
   loadingData = true;
-
+  isAdminUser = false;
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private dataService: DataService,
-    private formResetService: FormResetService
+    private formResetService: FormResetService,
+    private authService: AuthService
   ) {
     this.users = new Array<User>();
   }
 
   ngOnInit(): void {
     this.loadData();
+    this.isAdminUser = this.authService.role === 'ADMIN';
+
+    this.authService.roleSetEvent.subscribe((next) => {
+      if (next === 'ADMIN') this.isAdminUser = true;
+      else this.isAdminUser = false;
+    });
   }
 
   loadData(): void {
