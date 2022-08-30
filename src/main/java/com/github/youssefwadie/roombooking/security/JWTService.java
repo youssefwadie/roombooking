@@ -1,4 +1,4 @@
-package com.github.youssefwadie.roombooking.services;
+package com.github.youssefwadie.roombooking.security;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;

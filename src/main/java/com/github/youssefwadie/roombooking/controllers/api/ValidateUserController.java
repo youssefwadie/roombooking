@@ -6,14 +6,15 @@ import java.util.Map;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
+import com.github.youssefwadie.roombooking.model.entities.User;
+import com.github.youssefwadie.roombooking.security.RoomBookingUserDetails;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.github.youssefwadie.roombooking.services.JWTService;
+import com.github.youssefwadie.roombooking.security.JWTService;
 
 @RestController
 @RequestMapping("api/basicAuth")
@@ -27,10 +28,10 @@ public class ValidateUserController {
 	@RequestMapping("validate")
 	public ResponseEntity<Map<String, String>> userIsValid(HttpServletResponse response) {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		User currentUser = (User) auth.getPrincipal();
+		User currentUser = ((RoomBookingUserDetails) auth.getPrincipal()).getUser();
 
-		String name = currentUser.getUsername();
-		String role = currentUser.getAuthorities().toArray()[0].toString().substring(5);
+		String name = currentUser.getName();
+		String role = currentUser.getRole().substring(5);
 		String token = jwtService.generateToken(name, role);
 		Cookie cookie = new Cookie("token", token);
 		cookie.setPath("/api");

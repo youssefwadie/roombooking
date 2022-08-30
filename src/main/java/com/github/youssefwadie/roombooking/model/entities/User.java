@@ -1,11 +1,14 @@
 package com.github.youssefwadie.roombooking.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+import java.util.Collection;
 
 @Entity
 @Table(name = "users")
@@ -21,6 +24,9 @@ public class User {
 	@NotBlank(message = "password cannot be blank.")
 	// @JsonIgnore
 	private String password;
+
+	@JsonIgnore
+	private String role;
 
 	public User(String name, String password) {
 		this.name = name;
@@ -52,5 +58,13 @@ public class User {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
 	}
 }
